@@ -3,19 +3,14 @@
 #include "vector.h"
 #include "banker.h"
 
-void printMatrix(int** matrix, int NPROC, int NRES){
-  printf("\n");
-  for (int i = 0; i < NPROC; i++) {
-		for (int j = 0; j < NRES; j++){ 
-			printf("%d ", matrix[i][j]);
-		}
-    printf("\n");
-	}
 
-}
+/**
+* Global defs
+*/
+int NPROC; //number of processes 
+int NRES; //number of resource types
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
   // TODO: attempt to open scenario file and scan data into allocated structures
 
   FILE *file; 
@@ -33,8 +28,6 @@ int main(int argc, char *argv[])
   }
 
   //get the number of resource types and processes
-  int NRES; //number of resource types
-  int NPROC; //number of processes
   fscanf(file, "%d", &NRES);
   fscanf(file, "%d", &NPROC);
 
@@ -51,10 +44,8 @@ int main(int argc, char *argv[])
   }
 
   //TEST
-  printf("Total resource vector: ");
-  for (int i = 0; i < NRES; i++){
-    printf("%d ", totalResVector[i]);
-  }
+  printf("\nTotal resource vector: ");
+  printVector(totalResVector);
 
   //get space for the max demand matrix
 	int** maxDemand = (int**) malloc(sizeof(int*) * NPROC);
@@ -73,7 +64,7 @@ int main(int argc, char *argv[])
 
   //TEST
   printf("\nMax demand matrix:");
-  printMatrix(maxDemand, NPROC, NRES);
+  printMatrix(maxDemand);
 
   //get space for the allocation matrix
 	int** alloc = (int**) malloc(sizeof(int*) * NPROC);
@@ -92,12 +83,11 @@ int main(int argc, char *argv[])
 
   //TEST
   printf("\nAllocation matrix:");
-  printMatrix(alloc, NPROC, NRES);
+  printMatrix(alloc);
 
   fclose(file); //close the file 
 
   //free up everything:
-  
   for (int i = 0; i < NPROC; i++) { //free each row in maxDemand
     free(maxDemand[i]);
     maxDemand[i] = NULL;  //remove dangling pointer
