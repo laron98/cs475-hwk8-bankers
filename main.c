@@ -85,9 +85,40 @@ int main(int argc, char *argv[]){
   printf("\nAllocation matrix:");
   printMatrix(alloc);
 
+  //sanity checks:
+
+  //check that the currently allocated resources do not exceed the total number of resources
+  for (int i = 0; i < NRES; i++){
+    int sum = 0;
+    for (int j = 0; j < NPROC; j++){ 
+      sum = sum + alloc[j][i]; //sum up each column in alloc matrix
+		}
+    
+    if(sum > totalResVector[i]){ //check if the total allocs exceed the total number of resources
+      printf("Integrity test failed: allocated resources exceed total resources.\n");
+      break;
+    }
+  }
+
+  //ensure each thread’s needs do not exceed its max demands for each resource type
+  int* result;
+  for (int i = 0; i < NPROC; i++){
+    result = subVectors(maxDemand[i], alloc[i]);
+    for (int j = 0; j < NRES; j++){
+      if (result[j] < 0){
+        printf("Integrity test failed: allocated resources exceed demand for Thread %d.\n", i);
+        printf("Need %d instances of resource %d.\n", result[j], j);
+        break;
+      }
+    }
+    free(result);
+    result = NULL;
+  }
+
   fclose(file); //close the file 
 
   //free up everything:
+
   for (int i = 0; i < NPROC; i++) { //free each row in maxDemand
     free(maxDemand[i]);
     maxDemand[i] = NULL;  //remove dangling pointer
