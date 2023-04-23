@@ -22,15 +22,18 @@ int isSafeRecursive(int *available, int **alloc, int **need, int n, int m, char*
     int safe = 0;
     int noProgress = 1;
 
-    for(int i =-1;++i<depth*2;printf("  "));
+    for(int i =-1;++i<depth*2;printf("| "));
     printf("available: ");
     printVec(available,m);
-    for(int i=-1;++i<n;){
+    for(int i=-1;++i<n;){ // for each thread
         if(finish[i]) continue; // if I is finished, ignore
 
-        for(int i =-1;i++<depth*2;printf("  ")); 
+        for(int i =-1;i++<depth*2;printf("| ")); 
         printf("need[%u]: ",i);
         printVec(need[i],m);
+        for(int i =-1;i++<depth*2;printf("| ")); 
+        printf("alloc[%u]: ",i);
+        printVec(alloc[i],m);
         if(vectorLessThanEq(need[i],available,m)){ // all values in (need - alloc) are less than or equal to available
             vectorPlusEquals(available,alloc[i],m);
             finish[i] = 1;
