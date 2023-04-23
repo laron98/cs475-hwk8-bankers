@@ -6,22 +6,31 @@
 
 void vectorPlusEquals(int*v1,int*v2,int len){for(int i=-1;++i<len;v1[i]+=v2[i]);}
 void vectorMinusEquals(int*v1,int*v2,int len){for(int i=-1;++i<len;v1[i]-=v2[i]);}
-int vectorLessThan(int*v1,int*v2,int len){int b=1;for(int i=-1;++i<len;b*=v1[i]<v2[i]); return b;}
-int vectorGreaterThan(int*v1,int*v2,int len){int b=1; for(int i=-1;++i<len;b*=v1[i]>v2[i]); return b;}
+int vectorLessThan(int*v1,int*v2,int len){int b=1;for(int i=-1;++i<len;b*=(v1[i]<v2[i])); return b;}
+int vectorLessThanEq(int*v1,int*v2,int len){int b=1;for(int i=-1;++i<len;b*=(v1[i]<=v2[i])); return b;}
+int vectorGreaterThan(int*v1,int*v2,int len){int b=1; for(int i=-1;++i<len;b=b&&v1[i]>v2[i]); return b;}
+void printVec(int*v,int len){printf("[%u",v[0]);for(int i=0;++i<len;) printf(",%u",v[i]);printf("]\n");}
 
 // TODO - Safety Algorithm goes here
 int isSafeRecursive(int *available, int **alloc, int **need, int n, int m, char* outputString, int *finish,int depth){
     if(depth == n){
-        printf("%s",outputString);
+        printf("SAFE: %s\n",outputString);
         return 1;
     }
     int safe = 0;
     int noProgress = 1;
     for(int i=-1;++i<n;){
         if(finish[i]) continue; // if I is finished, ignore
-        if(!vectorGreaterThan(available,need[i],m)){
+        //printf("available: ");
+        //printVec(available,m);
+        //printf("need[%u]: ",i);
+        //printVec(need[i],m);
+        if(vectorLessThanEq(need[i],available,m)){
             vectorPlusEquals(available,need[i],m);
             finish[i] = 1;
+
+            sprintf(outputString,"%sT%u ",outputString,i);
+
             safe = safe||isSafeRecursive(available,alloc,need,n,m,outputString,finish,depth+1);
             noProgress = 0;
             //undo modifications, so as not to mess up other recursions
@@ -46,9 +55,9 @@ int isSafe(int *available, int **alloc, int **need, int n, int m){
 
     //is need defined as all the resources needed, or number of remaining resources?
     //if it's all the resources needed:
-    for(int i = -1; ++i<n; vectorMinusEquals(need[i],alloc[i],m));
+    //for(int i = -1; ++i<n; vectorMinusEquals(need[i],alloc[i],m));
 
-    char* outputString = (char *)malloc((n*3-1) * sizeof(char));
+    char* outputString = (char *)calloc((n*3),sizeof(char));
 
     int safe = isSafeRecursive(available,alloc,need,n,m,outputString,finish,0);
     free(outputString);
@@ -65,8 +74,3 @@ int isSafe(int *available, int **alloc, int **need, int n, int m){
 // 		return true	// safe!
 // 	return false		// unsafe!
 }
-
-/**
- * Tells whether all matricies have finished
-*/
-int isDone(int* f, int n){int curr;for(int i=0; ++i < n; curr = curr*f[n]); return curr;}
