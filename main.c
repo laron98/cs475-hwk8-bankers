@@ -117,6 +117,9 @@ int main(int argc, char *argv[]){
 
   fclose(file); //close the file 
 
+    //TODO: Run banker's safety algorithm
+  isSafe(totalResVector, maxDemand, alloc, NPROC, NRES);
+
   //free up everything:
 
   for (int i = 0; i < NPROC; i++) { //free each row in maxDemand
@@ -136,7 +139,6 @@ int main(int argc, char *argv[]){
   free(totalResVector); //free totalResVector array
   totalResVector = NULL; //no dangling pointers
   
-  //TODO: Run banker's safety algorithm
 
   return 0;
 }
