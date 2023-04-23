@@ -28,7 +28,7 @@ int isSafeRecursive(int *available, int **alloc, int **need, int n, int m, char*
         // printVec(available,m);
         // printf("need[%u]: ",i);
         // printVec(need[i],m);
-        if(vectorLessThanEq(need[i],available,m)){
+        if(vectorLessThan(need[i],available,m)){ // all values in (need - alloc) are less than or equal to available
             vectorPlusEquals(available,alloc[i],m);
             finish[i] = 1;
 
@@ -42,8 +42,7 @@ int isSafeRecursive(int *available, int **alloc, int **need, int n, int m, char*
             vectorMinusEquals(available,need[i],m);
         }
     }
-    git remote set-url origin
-    https://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/lwgover/cs475-hwk8-bankers.git
+
     if(noProgress){
         safe = 0;
         printf("UNSAFE: ");
@@ -53,11 +52,13 @@ int isSafeRecursive(int *available, int **alloc, int **need, int n, int m, char*
     return safe;
 }
 
-int isSafe(int *available, int **alloc, int **need, int n, int m){
+int isSafe(int *available, int **alloc, int **maxDemand, int n, int m){
 
     int* work = (int*)malloc(m*sizeof(int)); // m is the number of resources
     for(int i = -1; ++i < m; work[i]=available[i]); // clones available to work
     int* finish = (int*)calloc(n, sizeof(int)); // n is number of threads, all are set to 0
+    int** need = (int**)malloc(n*sizeof(int*)); // m is the number of resources
+    for(int i = -1; ++i<n;){need[i]=(int*)malloc(m*sizeof(int));for(int j=-1;++j<m;need[i][j]=maxDemand[i][j]-alloc[i][j]);} // makes need by subtracting alloc from maxDemand
 
     //is need defined as all the resources needed, or number of remaining resources?
     //if it's all the resources needed:
@@ -66,7 +67,7 @@ int isSafe(int *available, int **alloc, int **need, int n, int m){
     char* outputString = (char *)calloc((n*3),sizeof(char));
 
     int safe = isSafeRecursive(work,alloc,need,n,m,outputString,finish);
-    free(outputString); free(work); free(finish);
+    free(outputString); free(work); free(finish); for(int i=-1; ++i<n;free(need[i])); free(need);
 
     return safe;
 }
