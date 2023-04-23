@@ -118,7 +118,7 @@ int main(int argc, char *argv[]){
   fclose(file); //close the file 
 
     //TODO: Run banker's safety algorithm
-  isSafe(totalResVector, maxDemand, alloc, NPROC, NRES);
+  isSafe(totalResVector, alloc, maxDemand, NPROC, NRES);
 
   //free up everything:
 

@@ -9,36 +9,43 @@ void vectorMinusEquals(int*v1,int*v2,int len){for(int i=-1;++i<len;v1[i]-=v2[i])
 int vectorLessThan(int*v1,int*v2,int len){int b=1;for(int i=-1;++i<len;b*=(v1[i]<v2[i])); return b;}
 int vectorLessThanEq(int*v1,int*v2,int len){int b=1;for(int i=-1;++i<len;b*=(v1[i]<=v2[i])); return b;}
 int vectorGreaterThan(int*v1,int*v2,int len){int b=1; for(int i=-1;++i<len;b=b&&v1[i]>v2[i]); return b;}
-void printVec(int*v,int len){printf("[%u",v[0]);for(int i=0;++i<len;) printf(",%u",v[i]);printf("]\n");}
+void printVec(int*v,int len){printf("[%d",v[0]);for(int i=0;++i<len;) printf(",%d",v[i]);printf("]\n");}
+int isDone(int*v,int len){int b=1;for(int i=-1;++i<len;b*=v[i]);return b;}
+void printMat(int**mat,int n,int m){for(int i=-1;++i<n;printVec(mat[i],m));}
 
 // TODO - Safety Algorithm goes here
-int isSafeRecursive(int *available, int **alloc, int **need, int n, int m, char* outputString, int *finish,int depth){
-    if(depth == n){
+int isSafeRecursive(int *available, int **alloc, int **need, int n, int m, char* outputString, int *finish){
+    if(isDone(finish,n)){
         printf("SAFE: %s\n",outputString);
         return 1;
     }
+
     int safe = 0;
     int noProgress = 1;
     for(int i=-1;++i<n;){
         if(finish[i]) continue; // if I is finished, ignore
-        //printf("available: ");
-        //printVec(available,m);
-        //printf("need[%u]: ",i);
-        //printVec(need[i],m);
+        // printf("available: ");
+        // printVec(available,m);
+        // printf("need[%u]: ",i);
+        // printVec(need[i],m);
         if(vectorLessThanEq(need[i],available,m)){
-            vectorPlusEquals(available,need[i],m);
+            vectorPlusEquals(available,alloc[i],m);
             finish[i] = 1;
 
             sprintf(outputString,"%sT%u ",outputString,i);
 
-            safe = safe||isSafeRecursive(available,alloc,need,n,m,outputString,finish,depth+1);
+            safe = isSafeRecursive(available,alloc,need,n,m,outputString,finish)||safe;
             noProgress = 0;
             //undo modifications, so as not to mess up other recursions
+            outputString[strlen(outputString)-3] = '\0';
             finish[i] = 0;
             vectorMinusEquals(available,need[i],m);
         }
     }
+    git remote set-url origin
+    https://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/lwgover/cs475-hwk8-bankers.git
     if(noProgress){
+        safe = 0;
         printf("UNSAFE: ");
         for(int i = -1; ++i<n;printf(!finish[i] ? "T%u ":"",i));
         printf("can't finish\n");
@@ -48,10 +55,9 @@ int isSafeRecursive(int *available, int **alloc, int **need, int n, int m, char*
 
 int isSafe(int *available, int **alloc, int **need, int n, int m){
 
-    //int work[m]; // m is the number of resources
-    //for(int i = -1; ++i < m; work[i]=available[i]); // clones available to work
-    int* finish = (int*)malloc(n * sizeof(int)); // n is number of threads, all are set to 0
-    for(int i = -1; ++i < m; finish[i]=0); // sets finish to 0s
+    int* work = (int*)malloc(m*sizeof(int)); // m is the number of resources
+    for(int i = -1; ++i < m; work[i]=available[i]); // clones available to work
+    int* finish = (int*)calloc(n, sizeof(int)); // n is number of threads, all are set to 0
 
     //is need defined as all the resources needed, or number of remaining resources?
     //if it's all the resources needed:
@@ -59,18 +65,18 @@ int isSafe(int *available, int **alloc, int **need, int n, int m){
 
     char* outputString = (char *)calloc((n*3),sizeof(char));
 
-    int safe = isSafeRecursive(available,alloc,need,n,m,outputString,finish,0);
-    free(outputString);
-    return safe;
+    int safe = isSafeRecursive(work,alloc,need,n,m,outputString,finish);
+    free(outputString); free(work); free(finish);
 
-// 	while (exists unfinished thread i && Need[i] <= Work) {
-// 		// pretend that thread i finishes execution
-// 		// then OS can reclaim thread i's allocated resources
-// 		Work += Alloc[i]
-// 		Finish[i] = 1
-// 	}
-// 	// there's an execution order in which all threads
-// 	if (Finish == [1, 1, ..., 1])
-// 		return true	// safe!
-// 	return false		// unsafe!
+    return safe;
 }
+//      while (exists unfinished thread i && Need[i] <= Work) {
+//              // pretend that thread i finishes execution
+//              // then OS can reclaim thread i's allocated resources
+//              Work += Alloc[i]
+//              Finish[i] = 1
+//      }
+//      // there's an execution order in which all threads
+//      if (Finish == [1, 1, ..., 1])
+//              return true     // safe!
+//      return false            // unsafe!
