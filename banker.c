@@ -33,8 +33,8 @@ void vectorMinusEquals(int*v1,int*v2,int len){
  * @return whether all values of v1 are less than or equal to v2 
 */
 int vectorLessThanEq(int*v1,int*v2,int len){
-    int b=1;
-    for(int i=0;i<len;i++) b=b&&(v1[i]<=v2[i]); 
+    int b=TRUE;
+    for(int i=0;i<len;i++) b=b&&(v1[i]<=v2[i]);
     return b;
 }
 /**
@@ -45,7 +45,7 @@ int vectorLessThanEq(int*v1,int*v2,int len){
 */
 void printVec(int*v,int len){
     printf("[%d",v[0]);
-    for(int i=0;i<len;i++) printf(",%d",v[i]);
+    for(int i=1;i<len;i++) printf(",%d",v[i]);
     printf("]\n");
 }
 /**
@@ -57,7 +57,7 @@ void printVec(int*v,int len){
  * @return whether all values of v1 are less than or equal to v2 
 */
 int isDone(int*v,int len){
-    int b=1;
+    int b=TRUE;
     for(int i=0;i<len;i++) b=b&&v[i];
     return b;
 }
@@ -76,19 +76,19 @@ int isSafeRecursive(int *work, int **alloc, int **need, int n, int m, char* outp
 
     if(isDone(finish,n)){ //if there's an exectution order where all threads finish
         printf("SAFE: %s\n",outputString); // print order
-        return 1;
+        return TRUE;
     }
 
-    int safe = 0;
-    int noProgress = 1;
+    int safe = FALSE;
+    int noProgress = TRUE;
 
     for(int i=0;i<n;i++){ // for each thread
         if(finish[i]) continue; // if I is finished, ignore
             if(vectorLessThanEq(need[i],work,m)){ // all values in need are less than or equal to work
             // pretend that thread i finishes execution
-		    // then OS can reclaim thread i's allocated resources
+                    // then OS can reclaim thread i's allocated resources
             vectorPlusEquals(work,alloc[i],m); //work += alloc[i]
-            finish[i] = 1;
+            finish[i] = TRUE;
 
             char* currOutput = outputString;
             sprintf(outputString,"%sT%u ",currOutput,i);
@@ -102,7 +102,7 @@ int isSafeRecursive(int *work, int **alloc, int **need, int n, int m, char* outp
         }
     }
     if(noProgress){
-        safe = 0;
+        safe = FALSE;
         printf("UNSAFE: ");
         for(int i = 0; i<n;i++) printf(!finish[i] ? "T%u ":"",i);
         printf("can't finish\n");
@@ -120,7 +120,7 @@ int isSafeRecursive(int *work, int **alloc, int **need, int n, int m, char* outp
  * @param m num resources
 */
 int isSafe(int *available, int **alloc, int **maxDemand, int n, int m){
-    /** preprocessing */
+	/** preprocessing */
     int* work = (int*)malloc(m*sizeof(int)); // m is the number of resources
     for(int i = 0;i<m;i++) work[i]=available[i]; // clones available to work
 
@@ -131,19 +131,168 @@ int isSafe(int *available, int **alloc, int **maxDemand, int n, int m){
         need[i]=(int*)malloc(m*sizeof(int));
         for(int j=0;j<m;j++){
             need[i][j]=maxDemand[i][j]-alloc[i][j];     // makes need by subtracting alloc from maxDemand
-        } 
+        }
     }
     for(int i=0; i<n; i++) vectorMinusEquals(work,alloc[i],m); // account for resources already in use
 
-    char* outputString = (char *)calloc((n*3),sizeof(char)); // makes outputString
+    char* outputString = (char *)calloc((n*3+1),sizeof(char)); // makes outputString
 
     int safe = isSafeRecursive(work,alloc,need,n,m,outputString,finish,0);
 
-    free(outputString); 
-    free(work); 
-    free(finish); 
-    for(int i=0; i<n;i++) free(need[i]); 
+    free(outputString);
+    free(work);
+    free(finish);
+    for(int i=0; i<n;i++) free(need[i]);
     free(need);
 
     return safe;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
