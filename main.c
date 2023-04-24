@@ -43,10 +43,6 @@ int main(int argc, char *argv[]){
     totalResVector[i] = res;
   }
 
-  //TEST
-  //printf("\nTotal resource vector: ");
-  //printVector(totalResVector);
-
   //get space for the max demand matrix
 	int** maxDemand = (int**) malloc(sizeof(int*) * NPROC);
 	for (int i = 0; i < NPROC; i++){
@@ -62,10 +58,6 @@ int main(int argc, char *argv[]){
 		}
   }
 
-  //TEST
-  //printf("\nMax demand matrix:");
-  //printMatrix(maxDemand);
-
   //get space for the allocation matrix
 	int** alloc = (int**) malloc(sizeof(int*) * NPROC);
 	for (int i = 0; i < NPROC; i++){
@@ -80,10 +72,6 @@ int main(int argc, char *argv[]){
 			alloc[i][j] = allocRes;
 		}
   }
-
-  //TEST
-  //printf("\nAllocation matrix:");
-  //printMatrix(alloc);
 
   //sanity checks:
   int passSanity = 1;
@@ -125,7 +113,6 @@ int main(int argc, char *argv[]){
     isSafe(totalResVector, alloc, maxDemand, NPROC, NRES);
   }
     
-
   //free up everything:
 
   for (int i = 0; i < NPROC; i++) { //free each row in maxDemand
