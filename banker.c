@@ -33,7 +33,7 @@ void vectorMinusEquals(int*v1,int*v2,int len){
  * @return whether all values of v1 are less than or equal to v2 
 */
 int vectorLessThanEq(int*v1,int*v2,int len){
-    int b=TRUE;
+    int b=1;
     for(int i=0;i<len;i++) b=b&&(v1[i]<=v2[i]); 
     return b;
 }
@@ -57,7 +57,7 @@ void printVec(int*v,int len){
  * @return whether all values of v1 are less than or equal to v2 
 */
 int isDone(int*v,int len){
-    int b=TRUE;
+    int b=1;
     for(int i=0;i<len;i++) b=b&&v[i];
     return b;
 }
@@ -76,11 +76,11 @@ int isSafeRecursive(int *work, int **alloc, int **need, int n, int m, char* outp
 
     if(isDone(finish,n)){ //if there's an exectution order where all threads finish
         printf("SAFE: %s\n",outputString); // print order
-        return TRUE;
+        return 1;
     }
 
-    int safe = FALSE;
-    int noProgress = TRUE;
+    int safe = 0;
+    int noProgress = 1;
 
     for(int i=0;i<n;i++){ // for each thread
         if(finish[i]) continue; // if I is finished, ignore
@@ -88,7 +88,7 @@ int isSafeRecursive(int *work, int **alloc, int **need, int n, int m, char* outp
             // pretend that thread i finishes execution
 		    // then OS can reclaim thread i's allocated resources
             vectorPlusEquals(work,alloc[i],m); //work += alloc[i]
-            finish[i] = TRUE;
+            finish[i] = 1;
 
             char* currOutput = outputString;
             sprintf(outputString,"%sT%u ",currOutput,i);
@@ -102,7 +102,7 @@ int isSafeRecursive(int *work, int **alloc, int **need, int n, int m, char* outp
         }
     }
     if(noProgress){
-        safe = FALSE;
+        safe = 0;
         printf("UNSAFE: ");
         for(int i = 0; i<n;i++) printf(!finish[i] ? "T%u ":"",i);
         printf("can't finish\n");

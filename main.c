@@ -32,8 +32,8 @@ int main(int argc, char *argv[]){
   fscanf(file, "%d", &NPROC);
 
   //TEST
-  printf("Resource: %d\n", NRES);
-  printf("Process: %d\n", NPROC);
+  //printf("Resource: %d\n", NRES);
+  //printf("Process: %d\n", NPROC);
 
   //make space for the total resource vector
   int* totalResVector = (int*) malloc(sizeof(int) * NRES);
@@ -44,8 +44,8 @@ int main(int argc, char *argv[]){
   }
 
   //TEST
-  printf("\nTotal resource vector: ");
-  printVector(totalResVector);
+  //printf("\nTotal resource vector: ");
+  //printVector(totalResVector);
 
   //get space for the max demand matrix
 	int** maxDemand = (int**) malloc(sizeof(int*) * NPROC);
@@ -63,8 +63,8 @@ int main(int argc, char *argv[]){
   }
 
   //TEST
-  printf("\nMax demand matrix:");
-  printMatrix(maxDemand);
+  //printf("\nMax demand matrix:");
+  //printMatrix(maxDemand);
 
   //get space for the allocation matrix
 	int** alloc = (int**) malloc(sizeof(int*) * NPROC);
@@ -82,10 +82,11 @@ int main(int argc, char *argv[]){
   }
 
   //TEST
-  printf("\nAllocation matrix:");
-  printMatrix(alloc);
+  //printf("\nAllocation matrix:");
+  //printMatrix(alloc);
 
   //sanity checks:
+  int passSanity = 1;
 
   //check that the currently allocated resources do not exceed the total number of resources
   for (int i = 0; i < NRES; i++){
@@ -95,6 +96,7 @@ int main(int argc, char *argv[]){
 		}
     
     if(sum > totalResVector[i]){ //check if the total allocs exceed the total number of resources
+    passSanity = 0;
       printf("Integrity test failed: allocated resources exceed total resources.\n");
       break;
     }
@@ -106,6 +108,7 @@ int main(int argc, char *argv[]){
     result = subVectors(maxDemand[i], alloc[i]);
     for (int j = 0; j < NRES; j++){
       if (result[j] < 0){
+        passSanity = 0;
         printf("Integrity test failed: allocated resources exceed demand for Thread %d.\n", i);
         printf("Need %d instances of resource %d.\n", result[j], j);
         break;
@@ -117,8 +120,11 @@ int main(int argc, char *argv[]){
 
   fclose(file); //close the file 
 
-    //TODO: Run banker's safety algorithm
-  isSafe(totalResVector, alloc, maxDemand, NPROC, NRES);
+  //TODO: Run banker's safety algorithm
+  if (passSanity == 1){ //if sanity checks are passed, then run safety algorithm
+    isSafe(totalResVector, alloc, maxDemand, NPROC, NRES);
+  }
+    
 
   //free up everything:
 
