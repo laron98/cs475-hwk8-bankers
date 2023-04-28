@@ -12,7 +12,9 @@
  * @param len length of the arrays
 */
 void vectorPlusEquals(int*v1,int*v2,int len){
-    for(int i=0;i<len;i++) v1[i]+=v2[i];
+    for(int i=0; i<len; i++){ 
+	v1[i]+=v2[i];
+    }
 }
 /**
  * updates each value of v1 with v1-v2
@@ -22,7 +24,9 @@ void vectorPlusEquals(int*v1,int*v2,int len){
  * @param len length of the arrays
 */
 void vectorMinusEquals(int*v1,int*v2,int len){
-    for(int i=0;i<len;i++)v1[i]-=v2[i];
+    for(int i=0; i<len; i++){
+	v1[i]-=v2[i];
+    }
 }
 /**
  * returns whether all values of v1 are less than or equal to v2
@@ -33,8 +37,10 @@ void vectorMinusEquals(int*v1,int*v2,int len){
  * @return whether all values of v1 are less than or equal to v2 
 */
 int vectorLessThanEq(int*v1,int*v2,int len){
-    int b=TRUE;
-    for(int i=0;i<len;i++) b=b&&(v1[i]<=v2[i]);
+    int b = TRUE;
+    for(int i=0; i<len; i++){ 
+	b=b&&(v1[i]<=v2[i]);
+    }
     return b;
 }
 /**
@@ -45,7 +51,9 @@ int vectorLessThanEq(int*v1,int*v2,int len){
 */
 void printVec(int*v,int len){
     printf("[%d",v[0]);
-    for(int i=1;i<len;i++) printf(",%d",v[i]);
+    for(int i=1; i<len ;i++){
+	printf(",%d",v[i]);
+    }
     printf("]\n");
 }
 /**
@@ -58,7 +66,9 @@ void printVec(int*v,int len){
 */
 int isDone(int*v,int len){
     int b=TRUE;
-    for(int i=0;i<len;i++) b=b&&v[i];
+    for(int i=0; i<len; i++){ 
+	b=b&&v[i];
+    }
     return b;
 }
 /**
@@ -122,7 +132,9 @@ int isSafeRecursive(int *work, int **alloc, int **need, int n, int m, char* outp
 int isSafe(int *available, int **alloc, int **maxDemand, int n, int m){
 	/** preprocessing */
     int* work = (int*)malloc(m*sizeof(int)); // m is the number of resources
-    for(int i = 0;i<m;i++) work[i]=available[i]; // clones available to work
+    for(int i = 0;i<m;i++){
+	 work[i]=available[i]; // clones available to work
+    }
 
     int* finish = (int*)calloc(n,sizeof(int)); // n is number of threads, all are set to 0
     int** need = (int**)malloc(n*sizeof(int*)); // allocate need
@@ -133,7 +145,9 @@ int isSafe(int *available, int **alloc, int **maxDemand, int n, int m){
             need[i][j]=maxDemand[i][j]-alloc[i][j];     // makes need by subtracting alloc from maxDemand
         }
     }
-    for(int i=0; i<n; i++) vectorMinusEquals(work,alloc[i],m); // account for resources already in use
+    for(int i=0; i<n; i++){
+	vectorMinusEquals(work,alloc[i],m); // account for resources already in use
+    }
 
     char* outputString = (char *)calloc((n*3+1),sizeof(char)); // makes outputString
 
@@ -142,7 +156,9 @@ int isSafe(int *available, int **alloc, int **maxDemand, int n, int m){
     free(outputString);
     free(work);
     free(finish);
-    for(int i=0; i<n;i++) free(need[i]);
+    for(int i=0; i<n;i++){
+	free(need[i]);
+    }
     free(need);
 
     return safe;
